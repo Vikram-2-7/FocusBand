@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FOCUS BAND Workflow</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F0F4F8;
+            color: #2E4756;
+        }
+        .task-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .task-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        .tab {
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .tab-content {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+        }
+        .tab-content.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .task-card.animate-in {
+            animation: fadeInUp 0.5s ease-out;
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .animate-fade-in-scale {
+            animation: fadeInScale 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.95) translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+        .sub-tab-content {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .sub-tab-content.active-sub-content {
+            display: block;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header id="header" class="bg-white/90 backdrop-blur-md sticky top-0 z-50 shadow-md">
+        <nav class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="text-xl font-bold text-[#00A3C9]">FOCUS BAND</div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto p-4 md:p-8">
+        <section id="hero" class="text-center py-12 md:py-20">
+            <h1 class="text-4xl md:text-6xl font-bold text-[#2E4756] mb-4">Generative UI for Productivity</h1>
+            <p class="text-lg md:text-xl text-[#6B7A8F] max-w-3xl mx-auto">This is an interactive prototype that demonstrates how a natural language command can dynamically generate a task management interface.</p>
+        </section>
+
+        <section id="input-section" class="bg-white rounded-2xl shadow-xl p-6 md:p-8 mb-16">
+            <h2 class="text-2xl font-bold text-[#00A3C9] mb-4 text-center">Simulate Command</h2>
+            <div class="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4">
+                <textarea id="command-input" rows="3" placeholder="Type your command here, e.g., 'show my gym workout for today', 'delete the tab Household', 'add a new task to Household to clean the garage', or 'save changes'."
+                          class="w-full md:w-2/3 px-4 py-3 rounded-lg border-2 border-gray-300 focus:outline-none focus:border-[#00A3C9] transition-colors duration-200"></textarea>
+                <button id="generateBtn" class="bg-[#00A3C9] text-white font-semibold py-3 px-8 rounded-full shadow-lg hover:bg-[#008BB1] transition-all duration-300 transform hover:scale-105 active:scale-95 w-full md:w-auto">
+                    Generate UI
+                </button>
+            </div>
+            <div id="loading-ui" class="hidden text-center mt-6">
+                <div class="w-16 h-16 mx-auto mb-2 relative">
+                    <div class="absolute inset-0 border-4 border-[#00A3C9] border-t-transparent rounded-full animate-spin"></div>
+                    <svg class="absolute inset-0 m-auto text-[#00A3C9] w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 2a8 8 0 100 16 8 8 0 000-16zM6 10a4 4 0 118 0 4 4 0 01-8 0z" clip-rule="evenodd"></path>
+                    </svg>
+                </div>
+                <p class="text-gray-600 font-semibold text-lg">Generating UI...</p>
+            </div>
+            <div id="status-message" class="text-center mt-4 text-sm font-medium"></div>
+        </section>
+
+        <section id="dynamic-ui" class="bg-white rounded-2xl shadow-xl p-6 md:p-8 min-h-[400px]">
+            <h2 class="text-2xl font-bold text-[#00A3C9] mb-6 text-center">Generated UI Dashboard</h2>
+            <div id="tab-container" class="flex flex-wrap -mx-2 mb-4">
+            </div>
+            <div id="content-container">
+                <p id="initial-message" class="text-center text-gray-500 pt-16">Initializing... Please wait.</p>
+            </div>
+        </section>
+    </main>
+    
+    <footer class="text-center py-6 bg-white/60">
+        <p class="text-gray-500">Prototype created based on the FOCUS BAND project concept.</p>
+    </footer>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    const taskTemplates = {
+        'Education': (data) => `
+            <div id="education-sub-tabs-container" class="bg-[#F5F8FA] rounded-xl p-4 md:p-6 mb-4 animate-fade-in-scale">
+                <h3 class="text-xl font-bold text-[#2E4756] mb-4">${data.assigningMedium}</h3>
+                <div class="flex flex-wrap mb-4">
+                    <button class="sub-tab text-sm font-semibold py-2 px-4 rounded-full mr-2 transition-colors duration-200 bg-[#E0EBF5] text-[#2E4756] active-sub-tab" data-sub-tab="tasks">Tasks</button>
+                    <button class="sub-tab text-sm font-semibold py-2 px-4 rounded-full mr-2 transition-colors duration-200 text-gray-600" data-sub-tab="objectives">Objectives</button>
+                    <button class="sub-tab text-sm font-semibold py-2 px-4 rounded-full mr-2 transition-colors duration-200 text-gray-600" data-sub-tab="analysis">Analysis</button>
+                </div>
+                <div id="education-sub-content">
+                    <div class="sub-tab-content tasks active-sub-content">
+                        <h4 class="text-lg font-semibold text-gray-700 mb-2">My Tasks:</h4>
+                        ${data.tasks.map(task => `
+                            <div class="task-card bg-white rounded-lg p-4 shadow-sm mb-4">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h4 class="font-bold text-[#2E4756]">${task.task}</h4>
+                                        <p class="text-sm text-gray-600">Due: ${task.deadline}</p>
+                                    </div>
+                                    <span class="px-3 py-1 text-xs font-semibold rounded-full bg-orange-200 text-orange-800">
+                                        In Progress
+                                    </span>
+                                </div>
+                                <div class="mt-2 text-sm text-gray-500">
+                                    <p>Assigned by: ${task.assigningMedium}</p>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="sub-tab-content objectives">
+                        <h4 class="text-lg font-semibold text-gray-700 mb-2">Project Objectives:</h4>
+                        <div class="bg-white rounded-lg p-4 shadow-sm">
+                            <ul class="list-disc list-inside space-y-2 text-sm text-gray-600">
+                                ${data.tasks[data.tasks.length-1].objectives && data.tasks[data.tasks.length-1].objectives.length > 0 ?
+                                    data.tasks[data.tasks.length-1].objectives.map(obj => `
+                                        <li class="flex items-start">
+                                            <svg class="w-4 h-4 mt-1 mr-2 flex-shrink-0 ${obj.isComplete ? 'text-green-500' : 'text-gray-500'}" fill="currentColor" viewBox="0 0 20 20">
+                                                ${obj.isComplete ? '<path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>' : '<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586z" clip-rule="evenodd"></path>'}
+                                            </svg>
+                                            <span>${obj.text}</span>
+                                        </li>
+                                    `).join('')
+                                    : '<p class="text-sm text-gray-500 italic">No objectives to show.</p>'
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="sub-tab-content analysis">
+                        <h4 class="text-lg font-semibold text-gray-700 mb-2">Productivity Analysis:</h4>
+                        <div class="bg-white rounded-lg p-4 shadow-sm">
+                            <p class="text-sm text-gray-600 mb-4">You have completed **${data.tasks[data.tasks.length-1].productivity.completed} of ${data.tasks[data.tasks.length-1].productivity.total}** objectives for the TNSEC Project.</p>
+                            <svg class="w-full h-40" viewBox="0 0 100 100" preserveAspectRatio="none">
+                                <rect x="0" y="5" width="100" height="90" fill="#E0EBF5" rx="5" ry="5"></rect>
+                                <rect x="0" y="5" width="${(data.tasks[data.tasks.length-1].productivity.completed / data.tasks[data.tasks.length-1].productivity.total) * 100}" height="90" fill="#00A3C9" rx="5" ry="5"></rect>
+                                <text x="50" y="55" dominant-baseline="middle" text-anchor="middle" font-size="20" font-weight="bold" fill="#ffffff">${(data.tasks[data.tasks.length-1].productivity.completed / data.tasks[data.tasks.length-1].productivity.total) * 100}%</text>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `,
+        'Gym': (data) => `
+            <div id="gym-sub-tabs-container" class="bg-[#F5F8FA] rounded-xl p-4 md:p-6 mb-4 animate-fade-in-scale">
+                <h3 class="text-xl font-bold text-[#2E4756] mb-4">${data.assigningMedium}</h3>
+                <div class="flex flex-wrap mb-4">
+                    <button class="sub-tab text-sm font-semibold py-2 px-4 rounded-full mr-2 transition-colors duration-200 bg-[#E0EBF5] text-[#2E4756] active-sub-tab" data-sub-tab="tasks">Workout</button>
+                    <button class="sub-tab text-sm font-semibold py-2 px-4 rounded-full mr-2 transition-colors duration-200 text-gray-600" data-sub-tab="objectives">Plan</button>
+                    <button class="sub-tab text-sm font-semibold py-2 px-4 rounded-full mr-2 transition-colors duration-200 text-gray-600" data-sub-tab="analysis">Progress</button>
+                </div>
+                <div id="gym-sub-content">
+                    <div class="sub-tab-content tasks active-sub-content">
+                        <h4 class="text-lg font-semibold text-gray-700 mb-2">My Workout:</h4>
+                        ${data.tasks.map(task => `
+                            <div class="task-card bg-white rounded-lg p-4 shadow-sm mb-4">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h4 class="font-bold text-[#2E4756]">${task.task}</h4>
+                                        <p class="text-sm text-gray-600">When: ${task.deadline}</p>
+                                    </div>
+                                    <span class="px-3 py-1 text-xs font-semibold rounded-full bg-green-200 text-green-800">
+                                        Ready to go
+                                    </span>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="sub-tab-content objectives">
+                        <h4 class="text-lg font-semibold text-gray-700 mb-2">Workout Plan:</h4>
+                        <div class="bg-white rounded-lg p-4 shadow-sm">
+                            <ul class="list-disc list-inside space-y-2 text-sm text-gray-600">
+                                ${data.tasks[data.tasks.length-1].objectives && data.tasks[data.tasks.length-1].objectives.length > 0 ?
+                                    data.tasks[data.tasks.length-1].objectives.map(obj => `
+                                        <li class="flex items-start">
+                                            <svg class="w-4 h-4 mt-1 mr-2 flex-shrink-0 ${obj.isComplete ? 'text-green-500' : 'text-gray-500'}" fill="currentColor" viewBox="0 0 20 20">
+                                                ${obj.isComplete ? '<path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>' : '<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586z" clip-rule="evenodd"></path>'}
+                                            </svg>
+                                            <span>${obj.text}</span>
+                                        </li>
+                                    `).join('')
+                                    : '<p class="text-sm text-gray-500 italic">No objectives to show.</p>'
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="sub-tab-content analysis">
+                        <h4 class="text-lg font-semibold text-gray-700 mb-2">Progress Analysis:</h4>
+                        <div class="bg-white rounded-lg p-4 shadow-sm">
+                            <p class="text-sm text-gray-600 mb-4">You have completed **${data.tasks[data.tasks.length-1].productivity.completed} of ${data.tasks[data.tasks.length-1].productivity.total}** parts of your workout.</p>
+                            <svg class="w-full h-40" viewBox="0 0 100 100" preserveAspectRatio="none">
+                                <rect x="0" y="5" width="100" height="90" fill="#E0EBF5" rx="5" ry="5"></rect>
+                                <rect x="0" y="5" width="${(data.tasks[data.tasks.length-1].productivity.completed / data.tasks[data.tasks.length-1].productivity.total) * 100}" height="90" fill="#00A3C9" rx="5" ry="5"></rect>
+                                <text x="50" y="55" dominant-baseline="middle" text-anchor="middle" font-size="20" font-weight="bold" fill="#ffffff">${(data.tasks[data.tasks.length-1].productivity.completed / data.tasks[data.tasks.length-1].productivity.total) * 100}%</text>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `,
+        'Household': (data) => `
+            <div id="household-sub-tabs-container" class="bg-[#F5F8FA] rounded-xl p-4 md:p-6 mb-4 animate-fade-in-scale">
+                <h3 class="text-xl font-bold text-[#2E4756] mb-4">${data.assigningMedium}</h3>
+                <div class="flex flex-wrap mb-4">
+                    <button class="sub-tab text-sm font-semibold py-2 px-4 rounded-full mr-2 transition-colors duration-200 bg-[#E0EBF5] text-[#2E4756] active-sub-tab" data-sub-tab="tasks">Chores</button>
+                    <button class="sub-tab text-sm font-semibold py-2 px-4 rounded-full mr-2 transition-colors duration-200 text-gray-600" data-sub-tab="objectives">Checklist</button>
+                    <button class="sub-tab text-sm font-semibold py-2 px-4 rounded-full mr-2 transition-colors duration-200 text-gray-600" data-sub-tab="analysis">Status</button>
+                </div>
+                <div id="household-sub-content">
+                    <div class="sub-tab-content tasks active-sub-content">
+                        <h4 class="text-lg font-semibold text-gray-700 mb-2">My Chores:</h4>
+                        ${data.tasks.map(task => `
+                            <div class="task-card bg-white rounded-lg p-4 shadow-sm mb-4">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h4 class="font-bold text-[#2E4756]">${task.task}</h4>
+                                        <p class="text-sm text-gray-600">When: ${task.deadline}</p>
+                                    </div>
+                                    <span class="px-3 py-1 text-xs font-semibold rounded-full bg-blue-200 text-blue-800">
+                                        On Track
+                                    </span>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="sub-tab-content objectives">
+                        <h4 class="text-lg font-semibold text-gray-700 mb-2">Chore Checklist:</h4>
+                        <div class="bg-white rounded-lg p-4 shadow-sm">
+                            <ul class="list-disc list-inside space-y-2 text-sm text-gray-600">
+                                ${data.tasks[data.tasks.length-1].objectives && data.tasks[data.tasks.length-1].objectives.length > 0 ?
+                                    data.tasks[data.tasks.length-1].objectives.map(obj => `
+                                        <li class="flex items-start">
+                                            <svg class="w-4 h-4 mt-1 mr-2 flex-shrink-0 ${obj.isComplete ? 'text-green-500' : 'text-gray-500'}" fill="currentColor" viewBox="0 0 20 20">
+                                                ${obj.isComplete ? '<path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>' : '<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586z" clip-rule="evenodd"></path>'}
+                                            </svg>
+                                            <span>${obj.text}</span>
+                                        </li>
+                                    `).join('')
+                                    : '<p class="text-sm text-gray-500 italic">No objectives to show.</p>'
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="sub-tab-content analysis">
+                        <h4 class="text-lg font-semibold text-gray-700 mb-2">Status Analysis:</h4>
+                        <div class="bg-white rounded-lg p-4 shadow-sm">
+                            <p class="text-sm text-gray-600 mb-4">You have completed **${data.tasks[data.tasks.length-1].productivity.completed} of ${data.tasks[data.tasks.length-1].productivity.total}** chores this morning.</p>
+                            <svg class="w-full h-40" viewBox="0 0 100 100" preserveAspectRatio="none">
+                                <rect x="0" y="5" width="100" height="90" fill="#E0EBF5" rx="5" ry="5"></rect>
+                                <rect x="0" y="5" width="${(data.tasks[data.tasks.length-1].productivity.completed / data.tasks[data.tasks.length-1].productivity.total) * 100}" height="90" fill="#00A3C9" rx="5" ry="5"></rect>
+                                <text x="50" y="55" dominant-baseline="middle" text-anchor="middle" font-size="20" font-weight="bold" fill="#ffffff">${(data.tasks[data.tasks.length-1].productivity.completed / data.tasks[data.tasks.length-1].productivity.total) * 100}%</text>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `,
+        'default': (data) => `
+            <div id="${data.domain.toLowerCase()}-sub-tabs-container" class="bg-[#F5F8FA] rounded-xl p-4 md:p-6 mb-4 animate-fade-in-scale">
+                <h3 class="text-xl font-bold text-[#2E4756] mb-4">Source: ${data.assigningMedium}</h3>
+                <div class="flex flex-wrap mb-4">
+                    <button class="sub-tab text-sm font-semibold py-2 px-4 rounded-full mr-2 transition-colors duration-200 bg-[#E0EBF5] text-[#2E4756] active-sub-tab" data-sub-tab="tasks">Tasks</button>
+                    <button class="sub-tab text-sm font-semibold py-2 px-4 rounded-full mr-2 transition-colors duration-200 text-gray-600" data-sub-tab="objectives">Objectives</button>
+                    <button class="sub-tab text-sm font-semibold py-2 px-4 rounded-full mr-2 transition-colors duration-200 text-gray-600" data-sub-tab="analysis">Analysis</button>
+                </div>
+                <div id="${data.domain.toLowerCase()}-sub-content">
+                    <div class="sub-tab-content tasks active-sub-content">
+                        <h4 class="text-lg font-semibold text-gray-700 mb-2">My Task:</h4>
+                        ${data.tasks.map(task => `
+                            <div class="task-card bg-white rounded-lg p-4 shadow-sm mb-4">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h4 class="font-bold text-[#2E4756]">${task.task}</h4>
+                                        <p class="text-sm text-gray-600">Due: ${task.deadline}</p>
+                                    </div>
+                                    <span class="px-3 py-1 text-xs font-semibold rounded-full bg-orange-200 text-orange-800">
+                                        In Progress
+                                    </span>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="sub-tab-content objectives">
+                        <h4 class="text-lg font-semibold text-gray-700 mb-2">Objectives:</h4>
+                        <div class="bg-white rounded-lg p-4 shadow-sm">
+                            <ul class="list-disc list-inside space-y-2 text-sm text-gray-600">
+                                ${data.tasks[data.tasks.length-1].objectives && data.tasks[data.tasks.length-1].objectives.length > 0 ?
+                                    data.tasks[data.tasks.length-1].objectives.map(obj => `
+                                        <li class="flex items-start">
+                                            <svg class="w-4 h-4 mt-1 mr-2 flex-shrink-0 ${obj.isComplete ? 'text-green-500' : 'text-gray-500'}" fill="currentColor" viewBox="0 0 20 20">
+                                                ${obj.isComplete ? '<path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>' : '<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586z" clip-rule="evenodd"></path>'}
+                                            </svg>
+                                            <span>${obj.text}</span>
+                                        </li>
+                                    `).join('')
+                                    : '<p class="text-sm text-gray-500 italic">No objectives to show.</p>'
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="sub-tab-content analysis">
+                        <h4 class="text-lg font-semibold text-gray-700 mb-2">Status Analysis:</h4>
+                        <div class="bg-white rounded-lg p-4 shadow-sm">
+                            <p class="text-sm text-gray-600 mb-4">You have completed **${data.tasks[data.tasks.length-1].productivity.completed} of ${data.tasks[data.tasks.length-1].productivity.total}** objectives.</p>
+                            <svg class="w-full h-40" viewBox="0 0 100 100" preserveAspectRatio="none">
+                                <rect x="0" y="5" width="100" height="90" fill="#E0EBF5" rx="5" ry="5"></rect>
+                                <rect x="0" y="5" width="${(data.tasks[data.tasks.length-1].productivity.completed / data.tasks[data.tasks.length-1].productivity.total) * 100}" height="90" fill="#00A3C9" rx="5" ry="5"></rect>
+                                <text x="50" y="55" dominant-baseline="middle" text-anchor="middle" font-size="20" font-weight="bold" fill="#ffffff">${(data.tasks[data.tasks.length-1].productivity.completed / data.tasks[data.tasks.length-1].productivity.total) * 100}%</text>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `
+    };
+
+    const defaultCommandData = {
+        'Education': [
+            {
+                domain: 'Education',
+                assigningMedium: 'Professor',
+                task: 'TNSCEC Project',
+                deadline: 'August 31st',
+                objectives: [
+                    { text: "Complete research and literature review.", isComplete: true },
+                    { text: "Develop the project's core code/system.", isComplete: false },
+                    { text: "Write the final project report.", isComplete: false },
+                    { text: "Prepare for the final presentation.", isComplete: false }
+                ],
+                productivity: { completed: 1, total: 4 }
+            }
+        ],
+        'Gym': [
+            {
+                domain: 'Gym',
+                assigningMedium: 'Personal Trainer App',
+                task: 'Full Body Workout',
+                deadline: 'Today',
+                objectives: [
+                    { text: "Warm-up: 5 min jog on treadmill.", isComplete: true },
+                    { text: "Strength: 3 sets of 10 reps for Squats.", isComplete: false },
+                    { text: "Cardio: 20 min on elliptical machine.", isComplete: false },
+                    { text: "Cool-down: 10 min stretching.", isComplete: false }
+                ],
+                productivity: { completed: 1, total: 4 }
+            }
+        ],
+        'Household': [
+            {
+                domain: 'Household',
+                assigningMedium: 'Yourself',
+                task: 'Morning Chores',
+                deadline: 'Today',
+                objectives: [
+                    { text: "Make the bed.", isComplete: true },
+                    { text: "Do the dishes.", isComplete: true },
+                    { text: "Take out the trash.", isComplete: true },
+                    { text: "Wipe down kitchen counters.", isComplete: false }
+                ],
+                productivity: { completed: 3, total: 4 }
+            }
+        ]
+    };
+    
+    let commandData = {};
+    let activeTab = null;
+    let db;
+    let auth;
+    let userId;
+
+    document.addEventListener('DOMContentLoaded', async function () {
+        const generateBtn = document.getElementById('generateBtn');
+        const commandInput = document.getElementById('command-input');
+        const loadingUi = document.getElementById('loading-ui');
+        const tabContainer = document.getElementById('tab-container');
+        const contentContainer = document.getElementById('content-container');
+        const initialMessage = document.getElementById('initial-message');
+        const statusMessage = document.getElementById('status-message');
+
+        // Firebase Initialization
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        if (Object.keys(firebaseConfig).length > 0) {
+            const app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+            
+            // Sign in anonymously if no auth token is provided
+            try {
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch(error) {
+                console.error("Firebase Auth error:", error);
+            }
+
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    userId = user.uid;
+                    statusMessage.textContent = 'Authenticated. Loading data...';
+                    await loadFromFirestore();
+                } else {
+                    // This block will execute if user signs out or if auth fails
+                    userId = null;
+                    commandData = defaultCommandData;
+                    initialMessage.textContent = 'User not authenticated. Using default data.';
+                    updateUI();
+                }
+            });
+
+        } else {
+            console.warn("Firebase config not found. Using default data.");
+            commandData = defaultCommandData;
+            initialMessage.textContent = 'Firebase not configured. Using default data.';
+            updateUI();
+        }
+
+        async function saveToFirestore() {
+            if (!db || !userId) {
+                statusMessage.textContent = 'Error: Not authenticated. Cannot save.';
+                return;
+            }
+            statusMessage.textContent = 'Saving changes...';
+            const docRef = doc(db, `artifacts/${appId}/users/${userId}/tasks`, 'user_tasks');
+            try {
+                await setDoc(docRef, { data: JSON.stringify(commandData) });
+                statusMessage.textContent = 'Changes saved successfully!';
+            } catch (e) {
+                console.error("Error saving document: ", e);
+                statusMessage.textContent = 'Failed to save changes.';
+            }
+        }
+
+        async function loadFromFirestore() {
+            if (!db || !userId) {
+                statusMessage.textContent = 'Error: Not authenticated. Cannot load.';
+                return;
+            }
+            const docRef = doc(db, `artifacts/${appId}/users/${userId}/tasks`, 'user_tasks');
+            try {
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    const savedData = JSON.parse(docSnap.data().data);
+                    commandData = savedData;
+                    statusMessage.textContent = 'Data loaded successfully!';
+                } else {
+                    console.log("No saved data found. Using default data.");
+                    commandData = defaultCommandData;
+                    statusMessage.textContent = 'No saved data found.';
+                }
+            } catch (e) {
+                console.error("Error loading document:", e);
+                commandData = defaultCommandData;
+                statusMessage.textContent = 'Failed to load data. Using default.';
+            }
+            updateUI();
+        }
+
+        const API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=';
+
+        async function generateUiFromText(query) {
+            const systemPrompt = `
+            You are a highly efficient personal assistant for the "FOCUS BAND" project. Your sole purpose is to transform a user's verbal command into a structured JSON object for UI generation and modification.
+            The user's command will be a task-based request, which may include adding, deleting, or saving tasks or entire tabs.
+
+            You must always return a valid JSON object, and only the JSON object. Do not include any other text, explanations, or markdown formatting outside of the JSON block.
+
+            The JSON schema you must adhere to is as follows:
+            
+            1. For **adding a new task or tab**:
+               {
+                 "command": "add_task",
+                 "domain": "STRING - A single word for the primary domain, e.g., 'Education', 'Gym', 'Household', or a new domain based on the user's query.",
+                 "assigningMedium": "STRING - The source of the task, e.g., 'Professor', 'Personal Trainer App', 'Yourself'.",
+                 "task": "STRING - The main task title.",
+                 "deadline": "STRING - The deadline for the task, e.g., 'Today', 'Next Week', 'August 31st'.",
+                 "objectives": "ARRAY of OBJECTS - A list of sub-tasks or objectives. Each object must have a 'text' property and a 'isComplete' boolean property.",
+                 "productivity": {
+                   "completed": "INTEGER - A number representing a logical number of completed objectives.",
+                   "total": "INTEGER - The total number of objectives."
+                 }
+               }
+
+            2. For **deleting an entire tab/domain**:
+               {
+                 "command": "delete_tab",
+                 "target": "STRING - The exact name of the tab/domain to delete."
+               }
+            
+            3. For **deleting a specific task**:
+               {
+                 "command": "delete_task",
+                 "target_domain": "STRING - The domain where the task is located.",
+                 "target_task": "STRING - The exact name of the task to delete."
+               }
+
+            4. For **saving changes**:
+               {
+                 "command": "save_changes"
+               }
+
+            Based on the user's query, fill in the JSON. If the query mentions 'project' or 'professor', use the 'Education' domain. If 'workout' or 'gym', use 'Gym'. If 'chores' or 'household', use 'Household'. If the query is ambiguous or a new topic, create a new domain name like 'Playtime' or 'Gardening'.
+            If the user's query includes "delete the tab <name>", use the "delete_tab" command.
+            If the user's query includes "delete the task <name> from <domain>", use the "delete_task" command.
+            If the user's query is "save changes", "commit changes", or "save", use the "save_changes" command.
+            Otherwise, use the "add_task" command.
+            The 'productivity' numbers and the 'isComplete' status for 'add_task' should be a reasonable guess based on the task description. For the prompt 'add a tab on play time and set a goal to drink 2l of water', the domain should be 'Playtime' and the task 'Stay Hydrated', with an objective 'drink 2l of water' that is not completed.
+            `;
+
+            const payload = {
+                contents: [{ parts: [{ text: query }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+                generationConfig: {
+                    responseMimeType: "application/json"
+                }
+            };
+
+            const apiKey = '';
+            const apiUrl = `${API_URL}${apiKey}`;
+            
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to generate content from API.');
+                }
+                
+                const result = await response.json();
+                const candidate = result.candidates?.[0];
+                
+                if (candidate && candidate.content?.parts?.[0]?.text) {
+                    const generatedText = candidate.content.parts[0].text;
+                    return JSON.parse(generatedText);
+                } else {
+                    throw new Error('No content returned from API.');
+                }
+
+            } catch (e) {
+                console.error('Fetch or parsing error:', e);
+                throw e;
+            }
+        }
+
+        function renderTabs() {
+            tabContainer.innerHTML = '';
+            const domains = Object.keys(commandData);
+            domains.forEach(domain => {
+                const tab = document.createElement('button');
+                tab.className = `tab py-2 px-4 rounded-t-lg font-semibold text-gray-600 hover:text-[#00A3C9] transition-all duration-300`;
+                tab.textContent = domain;
+                tab.setAttribute('data-tab', domain);
+                tabContainer.appendChild(tab);
+            });
+        }
+
+        function renderContent() {
+            contentContainer.innerHTML = '';
+            
+            if (activeTab && commandData[activeTab]) {
+                initialMessage.style.display = 'none';
+                const template = taskTemplates[activeTab] || taskTemplates['default'];
+                const contentHtml = template({
+                    domain: activeTab,
+                    tasks: commandData[activeTab],
+                    assigningMedium: commandData[activeTab][commandData[activeTab].length - 1].assigningMedium
+                });
+
+                const wrapper = document.createElement('div');
+                wrapper.className = 'animate-fade-in-scale';
+                wrapper.innerHTML = contentHtml;
+                
+                const tabContent = document.createElement('div');
+                tabContent.className = 'tab-content active';
+                tabContent.appendChild(wrapper);
+                contentContainer.appendChild(tabContent);
+            } else if (Object.keys(commandData).length > 0) {
+                activeTab = Object.keys(commandData)[0];
+                renderContent();
+            } else {
+                initialMessage.style.display = 'block';
+                initialMessage.textContent = 'Type a command above and click "Generate UI" to get started.';
+            }
+        }
+        
+        function updateUI() {
+            const domains = Object.keys(commandData);
+            if (domains.length === 0) {
+                tabContainer.innerHTML = '';
+                contentContainer.innerHTML = `<p id="initial-message" class="text-center text-gray-500 pt-16">Type a command above and click "Generate UI" to get started.</p>`;
+                initialMessage.style.display = 'block';
+                return;
+            }
+            
+            if (!activeTab || !commandData[activeTab]) {
+                activeTab = domains[0];
+            }
+
+            renderTabs();
+            renderContent();
+
+            // Set active class on the correct tab
+            const activeTabElement = tabContainer.querySelector(`[data-tab="${activeTab}"]`);
+            if (activeTabElement) {
+                tabContainer.querySelectorAll('.tab').forEach(t => {
+                    t.classList.remove('bg-[#E0EBF5]', 'text-[#2E4756]');
+                    t.classList.add('bg-[#F5F8FA]', 'text-gray-600');
+                });
+                activeTabElement.classList.add('bg-[#E0EBF5]', 'text-[#2E4756]');
+            }
+        }
+
+        // --- Event Listeners ---
+        tabContainer.addEventListener('click', (e) => {
+            const target = e.target.closest('.tab');
+            if (target) {
+                const domain = target.getAttribute('data-tab');
+                if (domain !== activeTab) {
+                    activeTab = domain;
+                    updateUI();
+                }
+            }
+        });
+
+        contentContainer.addEventListener('click', (e) => {
+            const targetButton = e.target.closest('.sub-tab');
+            if (targetButton) {
+                const parent = targetButton.closest('[id$="-sub-tabs-container"]');
+                if (parent) {
+                    const targetTab = targetButton.getAttribute('data-sub-tab');
+                    
+                    parent.querySelectorAll('.sub-tab').forEach(tab => {
+                        tab.classList.remove('bg-[#E0EBF5]', 'text-[#2E4756]', 'active-sub-tab');
+                        tab.classList.add('text-gray-600');
+                    });
+                    targetButton.classList.add('bg-[#E0EBF5]', 'text-[#2E4756]', 'active-sub-tab');
+                    targetButton.classList.remove('text-gray-600');
+
+                    parent.querySelectorAll('.sub-tab-content').forEach(content => {
+                        content.classList.remove('active-sub-content');
+                    });
+
+                    const activeContent = parent.querySelector(`.sub-tab-content.${targetTab}`);
+                    if (activeContent) {
+                        activeContent.classList.add('active-sub-content');
+                    }
+                }
+            }
+        });
+
+        generateBtn.addEventListener('click', async () => {
+            const query = commandInput.value.trim().toLowerCase();
+            if (!query) {
+                statusMessage.textContent = 'Please enter a command to generate the UI.';
+                return;
+            }
+
+            if (query === 'save changes' || query === 'commit the changes' || query === 'save') {
+                await saveToFirestore();
+                return;
+            }
+
+            initialMessage.style.display = 'none';
+            generateBtn.disabled = true;
+            generateBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            loadingUi.classList.remove('hidden');
+            statusMessage.textContent = '';
+
+            try {
+                const generatedData = await generateUiFromText(query);
+                
+                switch (generatedData.command) {
+                    case 'add_task':
+                        const domainKey = generatedData.domain;
+                        if (commandData[domainKey]) {
+                            commandData[domainKey].push(generatedData);
+                        } else {
+                            commandData[domainKey] = [generatedData];
+                        }
+                        statusMessage.textContent = `Added new task to ${domainKey}.`;
+                        activeTab = domainKey;
+                        break;
+                    
+                    case 'delete_tab':
+                        const tabToDelete = generatedData.target;
+                        if (commandData[tabToDelete]) {
+                            delete commandData[tabToDelete];
+                            statusMessage.textContent = `Deleted tab: ${tabToDelete}.`;
+                            activeTab = Object.keys(commandData)[0] || null;
+                        } else {
+                            statusMessage.textContent = `Tab "${tabToDelete}" not found.`;
+                        }
+                        break;
+                    
+                    case 'delete_task':
+                        const targetDomain = generatedData.target_domain;
+                        const targetTask = generatedData.target_task;
+                        if (commandData[targetDomain]) {
+                            const initialLength = commandData[targetDomain].length;
+                            commandData[targetDomain] = commandData[targetDomain].filter(task => task.task.toLowerCase() !== targetTask.toLowerCase());
+                            if (commandData[targetDomain].length < initialLength) {
+                                statusMessage.textContent = `Deleted task: "${targetTask}" from ${targetDomain}.`;
+                            } else {
+                                statusMessage.textContent = `Task "${targetTask}" not found in ${targetDomain}.`;
+                            }
+                        } else {
+                            statusMessage.textContent = `Domain "${targetDomain}" not found.`;
+                        }
+                        activeTab = targetDomain;
+                        break;
+                    
+                    default:
+                        const defaultDomainKey = generatedData.domain;
+                        if (commandData[defaultDomainKey]) {
+                            commandData[defaultDomainKey].push(generatedData);
+                        } else {
+                            commandData[defaultDomainKey] = [generatedData];
+                        }
+                        statusMessage.textContent = `Added new task to ${defaultDomainKey}.`;
+                        activeTab = defaultDomainKey;
+                }
+                updateUI();
+            } catch (e) {
+                console.error("Failed to generate UI:", e);
+                statusMessage.textContent = 'An error occurred. Please try again.';
+            } finally {
+                loadingUi.classList.add('hidden');
+                generateBtn.disabled = false;
+                generateBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+        });
+    });
+</script>
+</body>
+</html>
