@@ -1,0 +1,34 @@
+{
+  "name": "focus-band",
+  "version": "1.0.0",
+  "description": "FOCUS BAND — Generative Productivity Dashboard with Gemini + Electron",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electronmon .",
+    "build": "electron-builder",
+    "test": "echo \"No tests specified\" && exit 0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Vikram-2-7/FocusBand.git"
+  },
+  "keywords": [
+    "electron",
+    "focus-band",
+    "gemini",
+    "productivity",
+    "ai"
+  ],
+  "author": "Vikram S",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Vikram-2-7/FocusBand/issues"
+  },
+  "homepage": "https://github.com/Vikram-2-7/FocusBand#readme",
+  "devDependencies": {
+    "electron": "^38.1.0",
+    "electronmon": "^2.0.2"
+  },
+  "type": "commonjs"
+}
