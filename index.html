@@ -1,146 +1,137 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FOCUS BAND</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #111827; /* Dark background */
-            color: #E5E7EB; /* Light text */
-            transition: background-color 0.5s ease-in-out;
-        }
-        .glass-card {
-            background-color: rgba(255, 255, 255, 0.05); /* Semi-transparent white */
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s ease-in-out;
-        }
-        .task-card:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
-        }
-        .btn-gradient {
-            background-image: linear-gradient(to right, #00C6FF, #0072FF);
-            transition: all 0.3s ease-in-out;
-        }
-        .btn-gradient:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
-            background-image: linear-gradient(to right, #00A6D1, #005BB1);
-        }
-        .input-glow:focus {
-            border-color: #0072FF;
-            box-shadow: 0 0 0 4px rgba(0, 114, 255, 0.3);
-        }
-        .tab.active {
-            background-image: linear-gradient(to right, #00C6FF, #0072FF);
-            color: white;
-            transform: scale(1.05);
-            box-shadow: 0 4px 10px rgba(0, 114, 255, 0.4);
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FOCUS BAND</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #111827; /* Dark background */
+            color: #E5E7EB; /* Light text */
+            transition: background-color 0.5s ease-in-out;
+        }
+        .glass-card {
+            background-color: rgba(255, 255, 255, 0.05); /* Semi-transparent white */
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease-in-out;
+        }
+        .task-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+        .btn-gradient {
+            background-image: linear-gradient(to right, #00C6FF, #0072FF);
+            transition: all 0.3s ease-in-out;
+        }
+        .btn-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+            background-image: linear-gradient(to right, #00A6D1, #005BB1);
+        }
+        .input-glow:focus {
+            border-color: #0072FF;
+            box-shadow: 0 0 0 4px rgba(0, 114, 255, 0.3);
+        }
+        .tab.active {
+            background-image: linear-gradient(to right, #00C6FF, #0072FF);
+            color: white;
+            transform: scale(1.05);
+            box-shadow: 0 4px 10px rgba(0, 114, 255, 0.4);
+        }
+    </style>
 </head>
 <body class="antialiased">
 
-    <!-- Header -->
-    <header class="bg-gray-800/80 backdrop-blur-md sticky top-0 z-50 shadow-lg">
-        <nav class="container mx-auto px-6 py-4">
-            <div class="flex justify-between items-center">
-                <div class="text-xl font-bold text-white tracking-wide">FOCUS BAND</div>
-            </div>
-        </nav>
-    </header>
+        <header class="bg-gray-800/80 backdrop-blur-md sticky top-0 z-50 shadow-lg">
+        <nav class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="text-xl font-bold text-white tracking-wide">FOCUS BAND</div>
+            </div>
+        </nav>
+    </header>
 
-    <!-- Hero Section -->
-    <main class="container mx-auto p-6 md:p-8">
-        <section class="text-center py-12 md:py-20">
-            <h1 class="text-4xl md:text-6xl font-extrabold text-white mb-4">
-                Generative UI for Productivity
-            </h1>
-            <p class="text-lg md:text-xl text-gray-400 max-w-3xl mx-auto">
-                This interactive prototype shows how natural language commands can dynamically generate a task management interface.
-            </p>
-        </section>
+        <main class="container mx-auto p-6 md:p-8">
+        <section class="text-center py-12 md:py-20">
+            <h1 class="text-4xl md:text-6xl font-extrabold text-white mb-4">
+                Generative UI for Productivity
+            </h1>
+            <p class="text-lg md:text-xl text-gray-400 max-w-3xl mx-auto">
+                This interactive prototype shows how natural language commands can dynamically generate a task management interface.
+            </p>
+        </section>
 
-        <!-- Gemini Test Form -->
-        <section id="gemini-test" class="glass-card rounded-2xl p-6 md:p-8 mb-10">
-            <h2 class="text-2xl font-bold text-cyan-400 mb-4 text-center">Gemini Test Input</h2>
-            <form id="commandForm" class="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4">
-                <input type="text" id="commandInput" placeholder="Type a command..." 
-                    class="w-full md:w-2/3 px-4 py-3 rounded-xl border-2 border-gray-700 bg-gray-900 text-white placeholder-gray-500 focus:outline-none input-glow transition-all duration-300">
-                <button type="submit" 
-                    class="w-full md:w-auto font-semibold py-3 px-6 rounded-full shadow-lg btn-gradient text-white flex items-center justify-center space-x-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
-                    </svg>
-                    <span>Send</span>
-                </button>
-            </form>
-            <pre id="output" class="bg-gray-900 rounded-lg p-4 mt-6 text-sm overflow-x-auto text-gray-400"></pre>
-        </section>
+                <section id="gemini-test" class="glass-card rounded-2xl p-6 md:p-8 mb-10">
+            <h2 class="text-2xl font-bold text-cyan-400 mb-4 text-center">Gemini Test Input</h2>
+            <form id="commandForm" class="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4">
+                <input type="text" id="commandInput" placeholder="Type a command..." 
+                    class="w-full md:w-2/3 px-4 py-3 rounded-xl border-2 border-gray-700 bg-gray-900 text-white placeholder-gray-500 focus:outline-none input-glow transition-all duration-300">
+                <button type="submit" 
+                    class="w-full md:w-auto font-semibold py-3 px-6 rounded-full shadow-lg btn-gradient text-white flex items-center justify-center space-x-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+                    </svg>
+                    <span>Send</span>
+                </button>
+            </form>
+            <pre id="output" class="bg-gray-900 rounded-lg p-4 mt-6 text-sm overflow-x-auto text-gray-400"></pre>
+        </section>
 
-        <!-- Placeholder for Dynamic UI -->
-        <section id="dynamic-ui" class="glass-card rounded-2xl p-6 md:p-8 min-h-[400px]">
-            <h2 class="text-2xl font-bold text-cyan-400 mb-6 text-center">Generated UI Dashboard</h2>
-            <div id="tab-container" class="flex flex-wrap items-center justify-center mb-4"></div>
-            <div id="content-container">
-                <p id="initial-message" class="text-center text-gray-500 pt-16">Waiting for command...</p>
-            </div>
-        </section>
-    </main>
+                <section id="dynamic-ui" class="glass-card rounded-2xl p-6 md:p-8 min-h-[400px]">
+            <h2 class="text-2xl font-bold text-cyan-400 mb-6 text-center">Generated UI Dashboard</h2>
+            <div id="tab-container" class="flex flex-wrap items-center justify-center mb-4"></div>
+            <div id="content-container">
+                <p id="initial-message" class="text-center text-gray-500 pt-16">Waiting for command...</p>
+            </div>
+        </section>
+    </main>
 
-    <!-- Footer -->
-    <footer class="text-center py-6 bg-gray-800/60 text-gray-500">
-        <p>Prototype created based on the FOCUS BAND project concept.</p>
-    </footer>
+        <footer class="text-center py-6 bg-gray-800/60 text-gray-500">
+        <p>Prototype created based on the FOCUS BAND project concept.</p>
+    </footer>
 
-    <!-- Renderer logic -->
-    <script>
-        const form = document.getElementById("commandForm");
-        const input = document.getElementById("commandInput");
-        const output = document.getElementById("output");
-        const tabContainer = document.getElementById("tab-container");
-        const contentContainer = document.getElementById("content-container");
+        <script>
+        const form = document.getElementById("commandForm");
+        const input = document.getElementById("commandInput");
+        const output = document.getElementById("output");
+        const tabContainer = document.getElementById("tab-container");
+        const contentContainer = document.getElementById("content-container");
 
-        // The API key is left empty as it will be provided in the runtime environment.
-        const GEMINI_API_KEY = "";
-        const GEMINI_URL =
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" +
-        GEMINI_API_KEY;
+        // The API key is left empty as it will be provided in the runtime environment.
+        const GEMINI_API_KEY = "";
+        const GEMINI_URL =
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" +
+        GEMINI_API_KEY;
+        const WORKER_URL = 'https://shy-disk-05da.vikrxmofficial.workers.dev/';
 
-        let tabs = {};
-        let activeTab = null;
-        let globalJSONVisible = false;
+        let tabs = {};
+        let activeTab = null;
+        let globalJSONVisible = false;
 
-        function normalizeName(name) {
-            return name.toLowerCase().trim();
-        }
+        function normalizeName(name) {
+            return name.toLowerCase().trim();
+        }
 
-        // --- Submit form ---
-        form.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const userCommand = input.value.trim();
-            if (!userCommand) return;
+        // --- Submit form ---
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const userCommand = input.value.trim();
+            if (!userCommand) return;
 
-            output.textContent = "⏳ Sending command to Gemini...";
-            input.disabled = true;
-            form.querySelector('button').disabled = true;
+            output.textContent = "⏳ Sending command to your Cloudflare Worker...";
+            input.disabled = true;
+            form.querySelector('button').disabled = true;
 
-            try {
-                const res = await fetch(GEMINI_URL, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        contents: [
-                            {
-                                parts: [
-                                    {
-                                        text: `
+            try {
+                const res = await fetch(WORKER_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        prompt: `
 Return ONLY valid JSON.
 No explanations, no markdown outside of JSON.
 
@@ -155,174 +146,165 @@ Example:
 
 User Command: "${userCommand}"
 `
-                                    },
-                                ],
-                            },
-                        ],
-                    }),
-                });
+                    }),
+                });
 
-                const data = await res.json();
-                console.log("🔍 RAW Gemini Response:", data);
+                const data = await res.json();
+                console.log("🔍 RAW Gemini Response:", data);
 
-                if (data.error) {
-                    output.textContent =
-                        `❌ API Error: ${data.error.message} (code ${data.error.code})`;
-                    return;
-                }
+                if (data.error) {
+                    output.textContent =
+                        `❌ API Error: ${data.error.message} (code ${data.error.code})`;
+                    return;
+                }
+                
+                const geminiText = data.text || "";
 
-                let textResponse = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+                let cleaned = geminiText
+                    .replace(/```json/gi, "")
+                    .replace(/```/g, "")
+                    .trim();
 
-                let cleaned = textResponse
-                    .replace(/```json/gi, "")
-                    .replace(/```/g, "")
-                    .trim();
+                if (!cleaned || cleaned === "{}") {
+                    output.textContent = "⚠️ Gemini returned empty or invalid JSON.";
+                    return;
+                }
 
-                if (!cleaned || cleaned === "{}") {
-                    output.textContent = "⚠️ Gemini returned empty or invalid JSON.";
-                    return;
-                }
+                output.textContent = "📦 Parsed Gemini JSON:\n" + cleaned;
 
-                output.textContent = "📦 Parsed Gemini JSON:\n" + cleaned;
+                let parsed;
+                try {
+                    parsed = JSON.parse(cleaned);
+                } catch (e) {
+                    output.textContent += "\n\n⚠️ Failed to parse JSON: " + e.message;
+                    return;
+                }
 
-                let parsed;
-                try {
-                    parsed = JSON.parse(cleaned);
-                } catch (e) {
-                    output.textContent += "\n\n⚠️ Failed to parse JSON: " + e.message;
-                    return;
-                }
+                updateUI(parsed);
 
-                if (!parsed.action) {
-                    output.textContent += "\n\n⚠️ No action found in JSON.";
-                    return;
-                }
+            } catch (err) {
+                output.textContent = "❌ Error: " + err.message;
+            } finally {
+                input.disabled = false;
+                form.querySelector('button').disabled = false;
+            }
+        });
 
-                updateUI(parsed);
+        // --- Update UI ---
+        function updateUI(data) {
+            const key = normalizeName(data.tabName || "");
+            if (!data.action) return;
 
-            } catch (err) {
-                output.textContent = "❌ Error: " + err.message;
-            } finally {
-                input.disabled = false;
-                form.querySelector('button').disabled = false;
-            }
-        });
+            if (data.action === "createTab") {
+                if (!tabs[key]) tabs[key] = { displayName: data.tabName, tasks: [] };
+                if (data.tasks) {
+                    tabs[key].tasks.push(...(Array.isArray(data.tasks) ? data.tasks : [data.tasks]));
+                }
+                activeTab = key;
+            }
 
-        // --- Update UI ---
-        function updateUI(data) {
-            const key = normalizeName(data.tabName || "");
-            if (!data.action) return;
+            if (data.action === "addTask") {
+                if (!tabs[key]) tabs[key] = { displayName: data.tabName, tasks: [] };
+                if (data.tasks) {
+                    tabs[key].tasks.push(...(Array.isArray(data.tasks) ? data.tasks : [data.tasks]));
+                }
+                activeTab = key;
+            }
 
-            if (data.action === "createTab") {
-                if (!tabs[key]) tabs[key] = { displayName: data.tabName, tasks: [] };
-                if (data.tasks) {
-                    tabs[key].tasks.push(...(Array.isArray(data.tasks) ? data.tasks : [data.tasks]));
-                }
-                activeTab = key;
-            }
+            if (data.action === "deleteTask") {
+                if (tabs[key]) {
+                    tabs[key].tasks = tabs[key].tasks.filter(
+                        (task) => task.title.toLowerCase() !== data.taskTitle.toLowerCase()
+                    );
+                }
+            }
 
-            if (data.action === "addTask") {
-                if (!tabs[key]) tabs[key] = { displayName: data.tabName, tasks: [] };
-                if (data.tasks) {
-                    tabs[key].tasks.push(...(Array.isArray(data.tasks) ? data.tasks : [data.tasks]));
-                }
-                activeTab = key;
-            }
+            if (data.action === "deleteTab") {
+                delete tabs[key];
+                if (activeTab === key) activeTab = Object.keys(tabs)[0] || null;
+            }
 
-            if (data.action === "deleteTask") {
-                if (tabs[key]) {
-                    tabs[key].tasks = tabs[key].tasks.filter(
-                        (task) => task.title.toLowerCase() !== data.taskTitle.toLowerCase()
-                    );
-                }
-            }
+            renderTabs();
+        }
 
-            if (data.action === "deleteTab") {
-                delete tabs[key];
-                if (activeTab === key) activeTab = Object.keys(tabs)[0] || null;
-            }
+        // --- Render Tabs & Tasks ---
+        function renderTabs() {
+            tabContainer.innerHTML = "";
+            Object.keys(tabs).forEach((key) => {
+                const btn = document.createElement("button");
+                btn.textContent = tabs[key].displayName;
+                btn.className =
+                    "tab px-4 py-2 mr-2 mb-2 rounded-full font-semibold transition-all duration-300 transform " +
+                    (key === activeTab ? "active" : "bg-gray-700 text-gray-300 hover:bg-gray-600");
+                btn.onclick = () => {
+                    activeTab = key;
+                    renderTabs();
+                };
+                tabContainer.appendChild(btn);
+            });
 
-            renderTabs();
-        }
+            contentContainer.innerHTML = "";
+            if (!activeTab || !tabs[activeTab]) {
+                 const initialMessage = document.createElement("p");
+                 initialMessage.id = "initial-message";
+                 initialMessage.className = "text-center text-gray-500 pt-16";
+                 initialMessage.textContent = "Waiting for command...";
+                 contentContainer.appendChild(initialMessage);
+                 return;
+            }
 
-        // --- Render Tabs & Tasks ---
-        function renderTabs() {
-            tabContainer.innerHTML = "";
-            Object.keys(tabs).forEach((key) => {
-                const btn = document.createElement("button");
-                btn.textContent = tabs[key].displayName;
-                btn.className =
-                    "tab px-4 py-2 mr-2 mb-2 rounded-full font-semibold transition-all duration-300 transform " +
-                    (key === activeTab ? "active" : "bg-gray-700 text-gray-300 hover:bg-gray-600");
-                btn.onclick = () => {
-                    activeTab = key;
-                    renderTabs();
-                };
-                tabContainer.appendChild(btn);
-            });
+            const tasks = tabs[activeTab].tasks;
 
-            contentContainer.innerHTML = "";
-            if (!activeTab || !tabs[activeTab]) {
-                 const initialMessage = document.createElement("p");
-                 initialMessage.id = "initial-message";
-                 initialMessage.className = "text-center text-gray-500 pt-16";
-                 initialMessage.textContent = "Waiting for command...";
-                 contentContainer.appendChild(initialMessage);
-                 return;
-            }
+            // --- Global JSON Toggle Button ---
+            if (tasks.length > 0) {
+                const globalToggleBtn = document.createElement("button");
+                globalToggleBtn.textContent = globalJSONVisible ? "Hide All JSON" : "Show All JSON";
+                globalToggleBtn.className =
+                    "mb-4 px-4 py-2 bg-gray-700 text-gray-300 rounded-full shadow hover:bg-gray-600 transition-all duration-200";
+                globalToggleBtn.onclick = () => {
+                    globalJSONVisible = !globalJSONVisible;
+                    renderTabs(); // re-render to update all JSON visibility
+                };
+                contentContainer.appendChild(globalToggleBtn);
+            }
 
-            const tasks = tabs[activeTab].tasks;
+            tasks.forEach((task, index) => {
+                const taskDiv = document.createElement("div");
+                taskDiv.className = "task-card glass-card p-6 rounded-2xl mb-4 shadow-xl transform transition-all duration-300";
 
-            // --- Global JSON Toggle Button ---
-            if (tasks.length > 0) {
-                const globalToggleBtn = document.createElement("button");
-                globalToggleBtn.textContent = globalJSONVisible ? "Hide All JSON" : "Show All JSON";
-                globalToggleBtn.className =
-                    "mb-4 px-4 py-2 bg-gray-700 text-gray-300 rounded-full shadow hover:bg-gray-600 transition-all duration-200";
-                globalToggleBtn.onclick = () => {
-                    globalJSONVisible = !globalJSONVisible;
-                    renderTabs(); // re-render to update all JSON visibility
-                };
-                contentContainer.appendChild(globalToggleBtn);
-            }
-
-            tasks.forEach((task, index) => {
-                const taskDiv = document.createElement("div");
-                taskDiv.className = "task-card glass-card p-6 rounded-2xl mb-4 shadow-xl transform transition-all duration-300";
-
-                // Task content + JSON toggle button
-                taskDiv.innerHTML = `
-                    <h4 class="font-bold text-white text-xl">${task.title}</h4>
-                    <p class="text-sm text-gray-400 mt-1">⏰ ${task.time || "no time"}</p>
-                    <button class="toggle-json mt-3 text-sm text-cyan-400 font-semibold hover:underline">
-                        ${globalJSONVisible ? "Hide JSON" : "Show JSON"}
-                    </button>
-                    <pre class="json-output bg-gray-900 p-3 mt-3 rounded-lg text-xs overflow-x-auto text-gray-400 ${
-                        globalJSONVisible ? "" : "hidden"
-                    }">
+                // Task content + JSON toggle button
+                taskDiv.innerHTML = `
+                    <h4 class="font-bold text-white text-xl">${task.title}</h4>
+                    <p class="text-sm text-gray-400 mt-1">⏰ ${task.time || "no time"}</p>
+                    <button class="toggle-json mt-3 text-sm text-cyan-400 font-semibold hover:underline">
+                        ${globalJSONVisible ? "Hide JSON" : "Show JSON"}
+                    </button>
+                    <pre class="json-output bg-gray-900 p-3 mt-3 rounded-lg text-xs overflow-x-auto text-gray-400 ${
+                        globalJSONVisible ? "" : "hidden"
+                    }">
 ${JSON.stringify(task, null, 2)}
-                    </pre>
-                `;
+                    </pre>
+                `;
 
-                // Toggle JSON logic (per task)
-                const toggleBtn = taskDiv.querySelector(".toggle-json");
-                const jsonPre = taskDiv.querySelector(".json-output");
-                toggleBtn.addEventListener("click", () => {
-                    if (jsonPre.classList.contains("hidden")) {
-                        jsonPre.classList.remove("hidden");
-                        toggleBtn.textContent = "Hide JSON";
-                    } else {
-                        jsonPre.classList.add("hidden");
-                        toggleBtn.textContent = "Show JSON";
-                    }
-                });
+                // Toggle JSON logic (per task)
+                const toggleBtn = taskDiv.querySelector(".toggle-json");
+                const jsonPre = taskDiv.querySelector(".json-output");
+                toggleBtn.addEventListener("click", () => {
+                    if (jsonPre.classList.contains("hidden")) {
+                        jsonPre.classList.remove("hidden");
+                        toggleBtn.textContent = "Hide JSON";
+                    } else {
+                        jsonPre.classList.add("hidden");
+                        toggleBtn.textContent = "Show JSON";
+                    }
+                });
 
-                contentContainer.appendChild(taskDiv);
-            });
-        }
+                contentContainer.appendChild(taskDiv);
+            });
+        }
 
-        // Initial render
-        renderTabs();
-    </script>
+        // Initial render
+        renderTabs();
+    </script>
 </body>
 </html>
