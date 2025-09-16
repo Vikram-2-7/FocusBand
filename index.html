@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FOCUS BAND</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      min-height: 100vh;
+      color: #f0f4f8;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+      transition: background 0.3s ease;
+    }
+    header:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-radius: 20px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .glass-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6);
+    }
+
+    input {
+      background: rgba(255, 255, 255, 0.15);
+      border: none;
+      color: #fff;
+      padding: 1.2rem 1.6rem;
+      border-radius: 12px;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+    input:focus {
+      background: rgba(255, 255, 255, 0.25);
+      box-shadow: 0 0 12px rgba(0, 200, 255, 0.8);
+    }
+
+    button {
+      background: linear-gradient(135deg, #00c6ff, #0072ff);
+      border: none;
+      border-radius: 14px;
+      padding: 0.9rem 1.4rem;
+      font-weight: 600;
+      color: #fff;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    button:hover {
+      transform: translateY(-2px) scale(1.05);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+      background: linear-gradient(135deg, #00eaff, #006eff);
+    }
+
+    .tab {
+      padding: 0.7rem 1.6rem;
+      border-radius: 50px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    .tab.active {
+      background: linear-gradient(135deg, #00c6ff, #0072ff);
+      color: white;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.4);
+    }
+    .tab:not(.active) {
+      background: rgba(255,255,255,0.15);
+      color: #ddd;
+    }
+    .tab:hover {
+      transform: translateY(-2px);
+      cursor: pointer;
+    }
+
+    .task-card {
+      background: linear-gradient(145deg, #1e3c72, #2a5298);
+      border-radius: 18px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.5);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .task-card:hover {
+      transform: translateY(-5px) scale(1.02);
+      box-shadow: 0 12px 28px rgba(0,0,0,0.6);
+    }
+
+    footer {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      text-align: center;
+      padding: 1rem;
+      font-size: 0.9rem;
+      color: #aaa;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* Smooth fade-in */
+    .fade-in {
+      animation: fadeIn 0.6s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .mic-button {
+      background: transparent;
+      padding: 0.9rem;
+      border-radius: 14px;
+      color: #fff;
+      transition: background 0.3s ease;
+    }
+    .mic-button:hover {
+      background: rgba(255,255,255,0.15);
+      transform: none;
+    }
+    .mic-button svg {
+      transition: color 0.3s ease;
+    }
+    .mic-button.active svg {
+      color: #ff4500;
+      animation: pulse 1.2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+  </style>
+</head>
+<body class="antialiased">
+
+  <!-- Header -->
+  <header class="sticky top-0 z-50 p-4">
+    <div class="text-2xl font-bold text-cyan-300">✨ FOCUS BAND</div>
+  </header>
+
+  <!-- Hero Section -->
+  <main class="container mx-auto p-6 md:p-8 fade-in">
+    <section class="text-center py-12 md:py-20">
+      <h1 class="text-5xl md:text-6xl font-extrabold text-white mb-6 drop-shadow-lg">
+        AI-Driven Generative Dashboard for Effortless Productivity
+      </h1>
+      <p class="text-lg md:text-xl text-gray-200 max-w-3xl mx-auto">
+        Transform your words into tasks — a seamless productivity companion powered by natural language intelligence.
+      </p>
+    </section>
+
+    <!-- Input Form -->
+    <section id="gemini-test" class="glass-card p-8 mb-10">
+      <h2 class="text-2xl font-bold text-cyan-300 mb-6 text-center">Focus Without Friction</h2>
+      <form id="commandForm" class="flex items-center justify-center space-x-4">
+        <input type="text" id="commandInput" placeholder="  Speak or type your intent — the system builds your productivity universe instantly..." class="w-full md:w-2/3 h-14">
+        <button type="button" id="micButton" class="mic-button p-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3.53-2.65 6.4-6.3 6.94V21h-2v-3.06C6.35 17.4 3.7 14.53 3.7 11h-1c0 3.99 2.94 7.27 6.75 7.95V22h6.5v-3.05c3.81-.68 6.75-3.96 6.75-7.95h-1z"/>
+          </svg>
+        </button>
+        <button type="submit">Generate</button>
+      </form>
+      <pre id="output" class="bg-gray-800/50 text-white rounded-lg p-4 mt-6 text-sm overflow-x-auto"></pre>
+    </section>
+
+    <!-- Dashboard -->
+    <section id="dynamic-ui" class="glass-card p-8 min-h-[400px]">
+      <h2 class="text-2xl font-bold text-cyan-300 mb-6 text-center">Dynamic Dashboard — Built in Real Time</h2>
+      <div id="tab-container" class="flex flex-wrap justify-center gap-3 mb-6"></div>
+      <div id="content-container">
+        <p id="initial-message" class="text-center text-gray-400 pt-16">Waiting for command...</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    Prototype concept • FOCUS BAND
+  </footer>
+
+  <!-- Renderer -->
+  <script>
+    const form = document.getElementById("commandForm");
+    const input = document.getElementById("commandInput");
+    const output = document.getElementById("output");
+    const micButton = document.getElementById("micButton");
+    const tabContainer = document.getElementById("tab-container");
+    const contentContainer = document.getElementById("content-container");
+
+   const GEMINI_PROXY = "https://focusband-backend.onrender.com/ask-gemini"; // use your real deployed backend URL
+
+
+    let tabs = {};
+    let activeTab = null;
+    let recognition = null;
+    let isListening = false;
+
+    // --- Speech Recognition ---
+    if ('webkitSpeechRecognition' in window) {
+      recognition = new webkitSpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = 'en-US';
+
+      recognition.onstart = () => {
+        isListening = true;
+        micButton.classList.add('active');
+        input.placeholder = "Listening...";
+      };
+
+      recognition.onend = () => {
+        isListening = false;
+        micButton.classList.remove('active');
+        input.placeholder = "Type a command...";
+      };
+
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        input.value = transcript;
+        form.requestSubmit(); // Automatically submit the form
+      };
+
+      recognition.onerror = (event) => {
+        console.error('Speech recognition error:', event.error);
+        input.placeholder = "Error, please try again.";
+        micButton.classList.remove('active');
+        isListening = false;
+      };
+
+      micButton.addEventListener('click', () => {
+        if (isListening) {
+          recognition.stop();
+        } else {
+          recognition.start();
+        }
+      });
+    } else {
+      micButton.style.display = 'none';
+      console.warn('Web Speech API is not supported in this browser.');
+    }
+
+    // --- Submit form ---
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const userCommand = input.value.trim();
+      if (!userCommand) return;
+
+      // Check for the specific user command to demo the functionality
+      const shoppingCommand = "Create a tab Shopping under it add a task to buy grocerries for daily use and in the grocerries task add a objective to complete it with in 8am morning";
+      if (userCommand.toLowerCase().includes("shopping") && userCommand.toLowerCase().includes("grocerries")) {
+        const mockData = {
+            "action": "addTask",
+            "tabName": "Shopping",
+            "tasks": [
+                {
+                    "title": "buy groceries for daily use",
+                    "time": "8am morning",
+                    "objectives": [
+                        {
+                            "text": "complete it with in 8am morning",
+                            "isComplete": false
+                        }
+                    ],
+                    "productivity": { "completed": 0, "total": 1 }
+                }
+            ]
+        };
+        output.textContent = "📦 Parsed Mock JSON:\n" + JSON.stringify(mockData, null, 2);
+        updateUI(mockData);
+        return;
+      }
+
+      output.textContent = "⏳ Sending command to Gemini...";
+
+      try {
+        const res = await fetch(GEMINI_PROXY, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ userCommand }) // send your command as JSON
+});
+
+
+        if (!res.ok) {
+            const errorData = await res.json();
+            if (res.status === 429) {
+                output.textContent = "❌ API Error: Quota exceeded. Please try again later.";
+            } else {
+                output.textContent = "❌ API Error: " + (errorData.error?.message || "An unknown error occurred.");
+            }
+            return;
+        }
+
+        const data = await res.json();
+        console.log("🔍 RAW Gemini Response:", data);
+
+        let textResponse = data.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
+
+        let cleaned = textResponse
+          .replace(/```json/gi, "")
+          .replace(/```/g, "")
+          .trim();
+
+        output.textContent = "📦 Parsed Gemini JSON:\n" + cleaned;
+
+        let parsed;
+        try {
+          parsed = JSON.parse(cleaned);
+        } catch (e) {
+          output.textContent += "\n\n⚠️ Failed to parse JSON: " + e.message;
+          return;
+        }
+
+        if (!parsed.action) {
+          output.textContent += "\n⚠️ No action found in response.";
+          return;
+        }
+
+        updateUI(parsed);
+
+      } catch (err) {
+        output.textContent = "❌ Network Error: " + err.message;
+      }
+    });
+
+    // --- Update UI ---
+    function updateUI(data) {
+      const tabName = data.tabName;
+      if (!tabName) return;
+
+      if (data.action === "createTab") {
+        if (!tabs[tabName]) tabs[tabName] = [];
+        if (data.tasks) {
+          const newTasks = Array.isArray(data.tasks) ? data.tasks : [data.tasks];
+          tabs[tabName].push(...newTasks);
+        }
+        activeTab = tabName;
+      }
+
+      if (data.action === "addTask") {
+        if (!tabs[tabName]) tabs[tabName] = [];
+        if (data.tasks) {
+          const newTasks = Array.isArray(data.tasks) ? data.tasks : [data.tasks];
+          tabs[tabName].push(...newTasks);
+        }
+        activeTab = tabName;
+      }
+
+      if (data.action === "deleteTask") {
+        if (tabs[tabName]) {
+          tabs[tabName] = tabs[tabName].filter(
+            (task) => task.title.toLowerCase() !== data.taskTitle?.toLowerCase()
+          );
+        }
+      }
+
+      if (data.action === "deleteTab") {
+        delete tabs[tabName];
+        if (activeTab === tabName) activeTab = Object.keys(tabs)[0] || null;
+      }
+
+      renderTabs();
+    }
+
+    // --- Render Tabs ---
+    function renderTabs() {
+      tabContainer.innerHTML = "";
+      Object.keys(tabs).forEach((tabName) => {
+        const btn = document.createElement("button");
+        btn.textContent = tabName;
+        btn.className =
+          "tab px-4 py-2 mr-2 rounded-full " +
+          (tabName === activeTab ? "active" : "");
+        btn.onclick = () => {
+          activeTab = tabName;
+          renderTabs();
+        };
+        tabContainer.appendChild(btn);
+      });
+
+      contentContainer.innerHTML = "";
+      if (!activeTab || !tabs[activeTab]) {
+          // Recreate the initial message element and append it
+          const initialMessage = document.createElement('p');
+          initialMessage.id = 'initial-message';
+          initialMessage.className = 'text-center text-gray-400 pt-16';
+          initialMessage.textContent = 'Waiting for command...';
+          contentContainer.appendChild(initialMessage);
+          return;
+      }
+
+      const tasks = tabs[activeTab];
+      const wrapper = document.createElement("div");
+      wrapper.className = "glass-card p-8 min-h-[400px] fade-in";
+
+      const header = document.createElement("h3");
+      header.className = "text-2xl font-bold text-cyan-300 mb-6 text-center";
+      header.textContent = activeTab;
+      wrapper.appendChild(header);
+
+      const subTabBtns = document.createElement("div");
+      subTabBtns.className = "flex flex-wrap justify-center gap-3 mb-6";
+
+      ["Tasks", "Objectives", "Analysis"].forEach((sub) => {
+        const subBtn = document.createElement("button");
+        subBtn.textContent = sub;
+        subBtn.className = "tab"; // Use the same tab style
+        subBtn.onclick = () => renderSubTab(wrapper, tasks, sub);
+        subTabBtns.appendChild(subBtn);
+      });
+
+      wrapper.appendChild(subTabBtns);
+
+      // Render the initial "Tasks" sub-tab
+      renderSubTab(wrapper, tasks, "Tasks");
+
+      contentContainer.appendChild(wrapper);
+    }
+
+    // --- Render SubTabs ---
+    function renderSubTab(wrapper, tasks, type) {
+      const existingContent = wrapper.querySelector('.sub-tab-content');
+      if (existingContent) {
+        wrapper.removeChild(existingContent);
+      }
+
+      const contentDiv = document.createElement("div");
+      contentDiv.className = "sub-tab-content fade-in";
+
+      if (type === "Tasks") {
+        if (tasks.length === 0) {
+            contentDiv.innerHTML = '<p class="text-gray-400 text-center pt-8">No tasks in this tab yet.</p>';
+        } else {
+            tasks.forEach((task) => {
+              const taskDiv = document.createElement("div");
+              taskDiv.className = "task-card";
+              taskDiv.innerHTML = `<h4 class="text-lg font-bold text-white">${task.title}</h4>
+                <p class="text-sm text-white">⏰ ${task.time || "No time specified"}</p>`;
+              contentDiv.appendChild(taskDiv);
+            });
+        }
+      }
+
+      if (type === "Objectives") {
+        const allObjectives = tasks.flatMap(task => task.objectives || []).filter(obj => obj.text);
+        if (allObjectives.length > 0) {
+          const ul = document.createElement("ul");
+          ul.className = "list-disc list-inside space-y-2 text-white";
+          allObjectives.forEach((obj) => {
+            const li = document.createElement("li");
+            li.textContent = obj.text;
+            li.className = `text-sm ${obj.isComplete ? 'line-through text-gray-400' : ''}`;
+            ul.appendChild(li);
+          });
+          contentDiv.appendChild(ul);
+        } else {
+          contentDiv.innerHTML = '<p class="text-gray-400 text-center pt-8">No objectives for tasks in this tab.</p>';
+        }
+      }
+
+      if (type === "Analysis") {
+        const totalTasks = tasks.length;
+        const completedTasks = tasks.filter(task => task.productivity?.completed === task.productivity?.total).length;
+        const totalObjectives = tasks.flatMap(task => task.objectives || []).length;
+        const completedObjectives = tasks.flatMap(task => task.objectives || []).filter(obj => obj.isComplete).length;
+        const completionPercentage = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
+
+        contentDiv.innerHTML = `
+          <div class="space-y-4 text-white">
+              <h4 class="text-lg font-bold">Task Overview</h4>
+              <p>Total Tasks: ${totalTasks}</p>
+              <p>Completed Tasks: ${completedTasks}</p>
+
+              <h4 class="text-lg font-bold mt-6">Objective Progress</h4>
+              <p>Total Objectives: ${totalObjectives}</p>
+              <p>Completed Objectives: ${completedObjectives}</p>
+
+              <h4 class="text-lg font-bold mt-6">Task Completion Rate</h4>
+              <div class="w-full bg-gray-600 rounded-full h-8 relative overflow-hidden">
+                <div id="progress-bar" class="bg-cyan-500 h-full rounded-full transition-all duration-500 ease-out" style="width: ${completionPercentage}%;"></div>
+                <div class="absolute inset-0 flex items-center justify-center text-xs font-bold text-white">
+                  ${completionPercentage.toFixed(0)}% (${completedTasks}/${totalTasks})
+                </div>
+              </div>
+          </div>
+        `;
+      }
+      wrapper.appendChild(contentDiv);
+    }
+
+    // Initial render
+    renderTabs();
+  </script>
+</body>
+</html>
