@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FOCUS BAND</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      min-height: 100vh;
+      color: #f0f4f8;
+      display: flex;
+      flex-direction: column;
+    }
+    header { background: rgba(255,255,255,0.1); backdrop-filter: blur(12px); box-shadow:0 8px 20px rgba(0,0,0,0.3); border-bottom:1px solid rgba(255,255,255,0.15);}
+    .glass-card { background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.18);backdrop-filter:blur(16px);border-radius:20px;box-shadow:0 8px 30px rgba(0,0,0,0.4);transition:transform 0.3s,box-shadow 0.3s;}
+    .glass-card:hover {transform:translateY(-5px);box-shadow:0 12px 35px rgba(0,0,0,0.6);}
+    input {background:rgba(255,255,255,0.15);border:none;color:#fff;padding:1.2rem 1.6rem;border-radius:12px;outline:none;transition:all 0.3s;}
+    input:focus {background:rgba(255,255,255,0.25);box-shadow:0 0 12px rgba(0,200,255,0.8);}
+    button {background:linear-gradient(135deg,#00c6ff,#0072ff);border:none;border-radius:14px;padding:0.9rem 1.4rem;font-weight:600;color:#fff;box-shadow:0 6px 15px rgba(0,0,0,0.4);transition:transform 0.25s,box-shadow 0.25s;cursor:pointer;}
+    button:hover {transform:translateY(-2px) scale(1.05);box-shadow:0 10px 25px rgba(0,0,0,0.6);background:linear-gradient(135deg,#00eaff,#006eff);}
+    .tab {padding:0.7rem 1.6rem;border-radius:50px;font-weight:600;transition:all 0.3s;}
+    .tab.active {background:linear-gradient(135deg,#00c6ff,#0072ff);color:white;box-shadow:0 6px 16px rgba(0,0,0,0.4);}
+    .tab:not(.active) {background:rgba(255,255,255,0.15);color:#ddd;}
+    .tab:hover {transform:translateY(-2px);cursor:pointer;}
+    .task-card {background:linear-gradient(145deg,#1e3c72,#2a5298);border-radius:18px;padding:1rem;margin-bottom:1rem;box-shadow:0 8px 18px rgba(0,0,0,0.5);transition:transform 0.3s,box-shadow 0.3s; display:flex; justify-content:space-between; align-items:center;}
+    .task-card:hover {transform:translateY(-5px) scale(1.02);box-shadow:0 12px 28px rgba(0,0,0,0.6);}
+    .custom-checkbox {appearance:none;height:24px;width:24px;background-color:rgba(255,255,255,0.2);border-radius:6px;cursor:pointer;border:2px solid #00c6ff;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
+    .custom-checkbox:checked {background-color:#00c6ff;border-color:#0072ff;}
+    .custom-checkbox:checked::after {content:'✓';color:white;font-size:16px;font-weight:bold;}
+    .mic-button {background:transparent;padding:0.9rem;border-radius:14px;color:#fff;transition:background 0.3s;}
+    .mic-button:hover {background:rgba(255,255,255,0.15);transform:none;}
+    .mic-button.active svg {color:#ff4500;animation:pulse 1.2s infinite;}
+    @keyframes pulse {0%,100%{transform:scale(1);}50%{transform:scale(1.1);}}
+    .time-group-header {margin-top:1.5rem;margin-bottom:0.75rem;padding:0.75rem;background:rgba(255,255,255,0.1);border-radius:0.5rem;font-size:1.125rem;font-weight:700;color:#67e8f9;border-left:4px solid #06b6d4;box-shadow:0 4px 10px rgba(0,0,0,0.3);}
+  </style>
+</head>
+<body class="antialiased">
+  <header class="sticky top-0 z-50 p-4">
+    <div class="text-2xl font-bold text-cyan-300">✨ FOCUS BAND</div>
+  </header>
+  <main class="container mx-auto p-6 md:p-8 fade-in">
+    <section class="text-center py-12 md:py-20">
+      <h1 class="text-5xl md:text-6xl font-extrabold text-white mb-6 drop-shadow-lg">
+        AI-Driven Generative Dashboard for Effortless Productivity
+      </h1>
+      <p class="text-lg md:text-xl text-gray-200 max-w-3xl mx-auto">
+        Transform your words into tasks — a seamless productivity companion powered by natural language intelligence.
+      </p>
+    </section>
+    <section id="gemini-test" class="glass-card p-8 mb-10">
+      <h2 class="text-2xl font-bold text-cyan-300 mb-6 text-center">Focus Without Friction</h2>
+      <form id="commandForm" class="flex items-center justify-center space-x-4">
+        <input type="text" id="commandInput"
+          placeholder=" Speak or type your intent — the system builds your productivity universe instantly..."
+          class="w-full md:w-2/3 h-14" />
+        <button type="button" id="micButton" class="mic-button p-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3.53-2.65 6.4-6.3 6.94V21h-2v-3.06C6.35 17.4 3.7 14.53 3.7 11h-1c0 3.99 2.94 7.27 6.75 7.95V22h6.5v-3.05c3.81-.68 6.75-3.96 6.75-7.95h-1z"/>
+          </svg>
+        </button>
+        <button type="submit">Generate</button>
+      </form>
+      <pre id="output" class="bg-gray-800/50 text-white rounded-lg p-4 mt-6 text-sm overflow-x-auto"></pre>
+    </section>
+    <section id="dynamic-ui" class="glass-card p-8 min-h-[400px]">
+      <h2 class="text-2xl font-bold text-cyan-300 mb-6 text-center">Dynamic Dashboard — Built in Real Time</h2>
+      <div id="tab-container" class="flex flex-wrap justify-center gap-3 mb-6"></div>
+      <div id="content-container">
+        <p id="initial-message" class="text-center text-gray-400 pt-16">Waiting for command...</p>
+      </div>
+    </section>
+  </main>
+  <footer>
+    Prototype concept • FOCUS BAND
+  </footer>
+  <script>
+    const form = document.getElementById("commandForm");
+    const input = document.getElementById("commandInput");
+    const output = document.getElementById("output");
+    const micButton = document.getElementById("micButton");
+    const tabContainer = document.getElementById("tab-container");
+    const contentContainer = document.getElementById("content-container");
+
+    const GEMINI_PROXY = "https://focusband.onrender.com/ask-gemini";
+
+    let tabs = {};
+    let activeTab = null;
+    let recognition = null;
+    let isListening = false;
+
+    // Voice input
+    if ("webkitSpeechRecognition" in window) {
+      recognition = new webkitSpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = "en-US";
+      recognition.onstart = () => {
+        isListening = true;
+        micButton.classList.add("active");
+        input.placeholder = "Listening...";
+      };
+      recognition.onend = () => {
+        isListening = false;
+        micButton.classList.remove("active");
+        input.placeholder = "Type a command...";
+      };
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        input.value = transcript;
+        form.requestSubmit();
+      };
+      recognition.onerror = (event) => {
+        console.error("Speech recognition error:", event.error);
+        input.placeholder = "Error, please try again.";
+        micButton.classList.remove("active");
+        isListening = false;
+      };
+      micButton.addEventListener("click", () => {
+        if (isListening) recognition.stop();
+        else recognition.start();
+      });
+    } else {
+      micButton.style.display = "none";
+      console.warn("Web Speech API is not supported in this browser.");
+    }
+
+    function extractTabNameFromInput(userCommand) {
+      // Simple extraction by looking for 'tab TabName'
+      const tabMatch = userCommand.match(/tab\s+([a-zA-Z0-9_ ]+)/i);
+      if (tabMatch && tabMatch[1]) {
+        return tabMatch[1].split(" ")[0].trim().replace(/[.,]/g, '');
+      }
+      // Default fallback if can't extract
+      return "Default";
+    }
+
+    function extractTasksFromInput(userCommand) {
+      // Very simple extraction: get everything after 'task to' or 'task'
+      let taskMatch = userCommand.match(/task (to )?([a-zA-Z0-9_ ,\-']+)/i);
+      if (taskMatch && taskMatch[2]) {
+        let taskTitle = taskMatch[2].trim().replace(/[.,]/g, '');
+        if (taskTitle.length > 60) taskTitle = taskTitle.slice(0, 60) + '...';
+        return [taskTitle];
+      }
+      return ["Untitled Task"];
+    }
+
+    function getMockFallbackData(userCommand) {
+      // Extract tab name and task(s) smartly from userCommand for domain separation
+      const tabName = extractTabNameFromInput(userCommand);
+      const tasksArr = extractTasksFromInput(userCommand);
+      return {
+        action: "addTask",
+        tabName: tabName.charAt(0).toUpperCase() + tabName.slice(1),
+        tasks: tasksArr.map(title => ({
+          title,
+          time: null,
+          objectives: [{ text: "Auto-generated objective", isComplete: false }],
+          productivity: { completed: 0, total: 1 }
+        }))
+      };
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const userCommand = input.value.trim();
+      if (!userCommand) return;
+      output.textContent = "⏳ Sending command to Gemini (using proxy)...";
+      const prompt = `
+Return ONLY valid JSON as per the following schema WITHOUT any explanations or quotes or markdown:
+
+{
+  "action": string,
+  "tabName": string,
+  "tasks": [
+    {
+      "title": string,
+      "time": string or null,
+      "objectives": [
+        {
+          "text": string,
+          "isComplete": boolean
+        }
+      ],
+      "productivity": {
+        "completed": integer,
+        "total": integer
+      }
+    }
+  ],
+  "taskTitle": string (optional for deleteTask)
+}
+
+User Command: "${userCommand}"
+`;
+      try {
+        const res = await fetch(GEMINI_PROXY, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }]
+          })
+        });
+        if (!res.ok) {
+          const errText = await res.text();
+          output.textContent = `❌ API Error ${res.status}: ${errText}`;
+          return;
+        }
+        const data = await res.json();
+        let rawText = data.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
+        let cleanedText = rawText.replace(/``````/g, "").trim();
+        output.textContent = "📦 Parsed Gemini JSON:\n" + cleanedText;
+        let parsed;
+        try { parsed = JSON.parse(cleanedText); }
+        catch (err) {
+          output.textContent += `\n\n⚠️ Failed to parse JSON: ${err.message}\nUsing fallback mock data.`;
+          parsed = getMockFallbackData(userCommand);
+        }
+        if (!parsed || !parsed.action || !parsed.tabName || !parsed.tasks) {
+          output.textContent += `\n⚠️ Invalid data received.\nUsing fallback mock data.`;
+          parsed = getMockFallbackData(userCommand);
+        }
+        updateUI(parsed);
+      } catch (err) {
+        output.textContent = "❌ Network Error: " + err.message + "\nUsing fallback mock data.";
+        const parsed = getMockFallbackData(userCommand);
+        updateUI(parsed);
+      }
+    });
+
+    window.toggleTaskCompletion = function(tabName, taskIndex) {
+      if (!tabs[tabName]) return;
+      const task = tabs[tabName][taskIndex];
+      if (!task) return;
+      const total = task.objectives?.length || 0;
+      const complete = task.productivity.completed === total && total > 0;
+      task.productivity.completed = complete ? 0 : total;
+      if (task.objectives) task.objectives.forEach(obj => obj.isComplete = !complete);
+      renderTabs();
+    };
+
+    window.deleteTaskHandler = function(tabName, taskIndex) {
+      if (!tabs[tabName]) return;
+      tabs[tabName].splice(taskIndex, 1);
+      renderTabs();
+    };
+
+    function updateUI(data) {
+      const tabName = data.tabName;
+      if (!tabName) return;
+      if (!tabs[tabName]) tabs[tabName] = []; // Each domain/tab has its own task array
+      if (data.action === "createTab" || data.action === "addTask") {
+        if (data.tasks) {
+          const newTasks = Array.isArray(data.tasks) ? data.tasks : [data.tasks];
+          tabs[tabName].push(...newTasks);
+        }
+        activeTab = tabName;
+      }
+      if (data.action === "deleteTask" && tabs[tabName] && data.taskTitle) {
+        tabs[tabName] = tabs[tabName].filter(
+          (task) => task.title.toLowerCase() !== data.taskTitle.toLowerCase()
+        );
+      }
+      if (data.action === "deleteTab") {
+        delete tabs[tabName];
+        if (activeTab === tabName) activeTab = Object.keys(tabs)[0] || null;
+      }
+      renderTabs();
+    }
+
+    function renderTabs() {
+      tabContainer.innerHTML = "";
+      Object.keys(tabs).forEach(tabName => {
+        const btn = document.createElement("button");
+        btn.textContent = tabName;
+        btn.className = "tab " + (tabName === activeTab ? "active" : "");
+        btn.onclick = () => { activeTab = tabName; renderTabs(); };
+        tabContainer.appendChild(btn);
+      });
+      contentContainer.innerHTML = "";
+      if (!activeTab || !tabs[activeTab]) {
+        const msg = document.createElement("p");
+        msg.id = "initial-message";
+        msg.className = "text-center text-gray-400 pt-16";
+        msg.textContent = "Waiting for command...";
+        contentContainer.appendChild(msg);
+        return;
+      }
+      const tasks = tabs[activeTab];
+      const wrapper = document.createElement("div");
+      wrapper.className = "fade-in";
+      const header = document.createElement("h3");
+      header.className = "text-2xl font-bold text-white mb-6 text-center";
+      header.textContent = (activeTab.charAt(0).toUpperCase() + activeTab.slice(1)) + " Tasks";
+      wrapper.appendChild(header);
+      const subTabBtns = document.createElement("div");
+      subTabBtns.className = "flex flex-wrap justify-center gap-3 mb-6";
+      let currentSubTab = "Tasks";
+      ["Tasks", "Objectives", "Analysis"].forEach(sub => {
+        const subBtn = document.createElement("button");
+        subBtn.textContent = sub;
+        subBtn.className = "tab " + (sub === currentSubTab ? "active" : "");
+        subBtn.onclick = () => {
+          wrapper.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+          subBtn.classList.add('active');
+          renderSubTab(wrapper, tasks, sub);
+        };
+        subTabBtns.appendChild(subBtn);
+      });
+      wrapper.appendChild(subTabBtns);
+      renderSubTab(wrapper, tasks, currentSubTab, true);
+      contentContainer.appendChild(wrapper);
+    }
+
+    function renderSubTab(parent, tasks, type, isInitial = false) {
+      let existingContent = parent.querySelector('.sub-tab-content');
+      const contentDiv = document.createElement("div");
+      contentDiv.className = "sub-tab-content fade-in p-4 bg-gray-800/10 rounded-xl";
+      if (type === "Tasks") {
+        if (tasks.length === 0) {
+          contentDiv.innerHTML = '<p class="text-gray-400 text-center pt-8">No tasks in this tab yet. Use the command box to add one!</p>';
+        } else {
+          // Group by time
+          const indexedTasks = tasks.map((task, idx) => ({...task, originalIndex: idx}));
+          const groupedTasks = indexedTasks.reduce((acc, t) => {
+            const g = t.time || "No Due Time";
+            if (!acc[g]) acc[g] = [];
+            acc[g].push(t);
+            return acc;
+          }, {});
+          Object.keys(groupedTasks).forEach(timeGroup => {
+            const groupHeader = document.createElement("div");
+            groupHeader.className = "time-group-header";
+            groupHeader.textContent = timeGroup;
+            contentDiv.appendChild(groupHeader);
+            groupedTasks[timeGroup].forEach(taskObj => {
+              const idx = taskObj.originalIndex;
+              const t = taskObj;
+              const totalObjectives = t.objectives?.length || 0;
+              const isTaskComplete = t.productivity?.completed === totalObjectives && totalObjectives > 0;
+              const taskDiv = document.createElement("div");
+              taskDiv.className = "task-card";
+              taskDiv.innerHTML = `
+                <div class="flex items-center space-x-4">
+                  <input type="checkbox"
+                    id="task-check-${idx}"
+                    class="custom-checkbox"
+                    ${isTaskComplete?'checked':''}
+                    onchange="window.toggleTaskCompletion('${activeTab}',${idx})">
+                  <div>
+                    <h4 class="text-xl font-bold ${isTaskComplete?'line-through text-gray-400':'text-cyan-200'}">${t.title}</h4>
+                  </div>
+                </div>
+                <button onclick="window.deleteTaskHandler('${activeTab}',${idx})"
+                    class="p-2 bg-red-600/70 hover:bg-red-500 rounded-full transition duration-200"
+                    title="Delete Task">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>`;
+              contentDiv.appendChild(taskDiv);
+            });
+          });
+        }
+      } else if (type === "Objectives") {
+        const objectives = tasks.flatMap(t => t.objectives || []).filter(o => o.text);
+        if (objectives.length > 0) {
+          const ul = document.createElement("ul");
+          ul.className = "space-y-3 text-white";
+          objectives.forEach(o => {
+            const li = document.createElement("li");
+            li.className = `flex items-start text-base p-2 bg-gray-900/30 rounded-lg`;
+            const check = o.isComplete ? '✅' : '⬜';
+            li.innerHTML = `<span class="mr-3 text-lg">${check}</span> <span class="${o.isComplete ? 'line-through text-gray-400':''}">${o.text}</span>`;
+            ul.appendChild(li);
+          });
+          contentDiv.appendChild(ul);
+        } else {
+          contentDiv.innerHTML = '<p class="text-gray-400 text-center pt-8">No objectives for tasks in this tab.</p>';
+        }
+      } else if (type === "Analysis") {
+        const totalTasks = tasks.length;
+        let totalObjectives = 0, completedObjectives = 0, completedTasks = 0;
+        tasks.forEach(task => {
+          if (task.objectives) {
+            totalObjectives += task.objectives.length;
+            completedObjectives += (task.objectives.filter(obj => obj.isComplete).length);
+          }
+          const taskTotal = task.productivity?.total ?? (task.objectives ? task.objectives.length : 0);
+          const taskCompleted = task.productivity?.completed ?? 0;
+          if (taskTotal > 0 && taskCompleted === taskTotal) completedTasks++;
+        });
+        const completionPercentage = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
+        contentDiv.innerHTML = `
+          <div class="space-y-6 text-white bg-gray-900/30 p-6 rounded-xl">
+            <h4 class="text-xl font-bold text-cyan-300">Productivity Snapshot</h4>
+            <div class="grid grid-cols-2 gap-4 text-sm md:text-base">
+              <div class="p-3 bg-blue-900/50 rounded-lg">
+                <p class="font-semibold text-gray-300">Total Tasks</p>
+                <p class="text-2xl font-extrabold text-white">${totalTasks}</p>
+              </div>
+              <div class="p-3 bg-green-900/50 rounded-lg">
+                <p class="font-semibold text-gray-300">Completed Tasks</p>
+                <p class="text-2xl font-extrabold text-white">${completedTasks}</p>
+              </div>
+              <div class="p-3 bg-yellow-900/50 rounded-lg">
+                <p class="font-semibold text-gray-300">Total Objectives</p>
+                <p class="text-2xl font-extrabold text-white">${totalObjectives}</p>
+              </div>
+              <div class="p-3 bg-purple-900/50 rounded-lg">
+                <p class="font-semibold text-gray-300">Completed Objectives</p>
+                <p class="text-2xl font-extrabold text-white">${completedObjectives}</p>
+              </div>
+            </div>
+            <h4 class="text-lg font-bold pt-4">Task Completion Rate</h4>
+            <div class="w-full bg-gray-600 rounded-full h-8 relative overflow-hidden">
+              <div id="progress-bar" class="bg-cyan-500 h-full rounded-full transition-all duration-500 ease-out" style="width: ${completionPercentage}%;"></div>
+              <div class="absolute inset-0 flex items-center justify-center text-sm font-bold text-white">
+                ${completionPercentage.toFixed(0)}% (${completedTasks}/${totalTasks})
+              </div>
+            </div>
+          </div>
+        `;
+      }
+      if (existingContent) parent.replaceChild(contentDiv, existingContent);
+      else parent.appendChild(contentDiv);
+    }
+    renderTabs();
+  </script>
+</body>
+</html>
